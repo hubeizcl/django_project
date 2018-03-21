@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}blog article{% endblock %}
+{% block content %}
+    <div class="row text-center vertical-middle-sm">
+        <h1>{{ article.title }}</h1>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 co-md-8">
+            <p class="text-center">
+                <span>{{ article.author.username }}</span>
+                <span style="margin-left: 20px">{{ publish }}</span>
+            </p>
+            <div>
+                {{ article.body }}
+            </div>
+            <div class="col-xs-6 col-md-4">
+                <h2>广告</h2>
+                <p>跟着老齐：www.itdiffer.com</p>
+                <img src="http://imgsrc.baidu.com/imgad/pic/item/730e0cf3d7ca7bcbe205bd15b5096b63f624a88a.jpg">
+            </div>
+        </div>
+    </div>
+{% endblock %}
