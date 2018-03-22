@@ -1,0 +1,18 @@
+{% load staticfiles %}
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="http://www.itdiffer.com">
+                <img src="{% static 'images/logo_coffe_cat.jpg' %}" width="100px">
+            </a>
+        </div>
+        <div>
+            <ul class="nav navbar-nav" role="navigation">
+                <li><a href="{% url 'blog:blog_title' %}">BLOG</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#">LOGIN</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
