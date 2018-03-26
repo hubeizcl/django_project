@@ -3,6 +3,7 @@
 {% block content %}
     <h1>My Information</h1>
     <div class="row">
+
         <div class="row">
             <div class="col-md-4 text-right"><span>用户名：</span></div>
             <div class="col-md-8 text-left">{{ user.username }}</div>
@@ -39,5 +40,8 @@
             <div class="col-md-4 text-right"><span>个人介绍：</span></div>
             <div class="col-md-8 text-left">{{ userinfo.aboutme }}</div>
         </div>
+        <a href="{% url 'account:edit_myself_information' %}">
+            <button class="btn btn-primary btn-lg">edit_myself_information</button>
+        </a>
     </div>
 {% endblock %}

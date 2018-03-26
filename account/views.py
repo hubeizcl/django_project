@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login
 from .forms import LoginForm, RegistrationForm, UserProfileForm, UserInfoForm, UserForm
 from django.contrib.auth.decorators import login_required
@@ -52,4 +52,41 @@ def myself(request):
     user = User.objects.get(username=request.user.username)
     userprofile = UserProfile.objects.get(user=user)
     userinfo = Userinfo.objects.get(user=user)
-    return render(request, 'account/myself.html', {"user": user, "userprofile": userprofile, "userinfo": userinfo})
+    return render(request, 'account/myself_information.html',
+                  {"user": user, "userprofile": userprofile, "userinfo": userinfo})
+
+
+@login_required(login_url='/account/login/')
+def myself_edit(request):
+    user = User.objects.get(username=request.user.username)
+    userprofile = UserProfile.objects.get(user=user)
+    userinfo = Userinfo.objects.get(user=user)
+    if request.method == "POST":
+        user_form = UserForm(request.POST)
+        userprofile_form = UserProfileForm(request.POST)
+        userinfo_form = UserInfoForm(request.POST)
+        if user_form.is_valid() and userprofile_form.is_valid() and userinfo_form.is_valid():
+            user_cd = user_form.cleaned_data
+            userprofile_cd = userprofile_form.cleaned_data
+            userinfo_cd = userinfo_form.cleaned_data
+            print(user_cd['email'])
+            user.email = user_cd['email']
+            userprofile.brith = userprofile_cd['brith']
+            userprofile.phone = userprofile_cd['phone']
+            userinfo.company = userinfo_cd['company']
+            userinfo.school = userinfo_cd['school']
+            userinfo.address = userinfo_cd['address']
+            userinfo.profession = userinfo_cd['profession']
+            userinfo.aboutme = userinfo_cd['aboutme']
+            user.save()
+            userprofile.save()
+            userinfo.save()
+            return HttpResponseRedirect('account/my_information')
+        else:
+            user_form = UserForm(instance=request.user)
+            userprofile_form = UserProfileForm(initial={"brith": userprofile.brith, "phone": userprofile.phone})
+            userinfo_form = UserInfoForm(
+                initial={"school": userinfo.school, "company": userinfo.company, "address": userinfo.address,
+                         "profession": userinfo.profession, "aboutme": userinfo.aboutme})
+            return render(request, 'account/edit_myself_information.html',
+                          {"user": user_form, "userprofile": userprofile_form, "userinfo": userinfo_form})
