@@ -1,4 +1,26 @@
 {% extends 'article/base.html' %}
 {% load staticfiles %}
-{% block title %}{% endblock %}
-{% block content %}{% endblock %}
+{% block title %}article column{% endblock %}
+{% block content %}
+    <div>
+        <p class="text-right">
+            <button class=" btn btn-primary btn-lg">add column</button>
+        </p>
+        <table class="table table-hover">
+            <tr>
+                <td>序号</td>
+                <td>栏目名称</td>
+                <td>操作</td>
+            </tr>
+            {% for column in columns %}
+                <tr>
+                    <td>{{ forloop.counter }}</td><!--获取当前循环的序号-->
+                    <td>{{ column.column }}</td>
+                    <td>--</td>
+                </tr>
+            {% empty %}
+                <p>还没设置栏目，太懒了</p><!--循环为空就显示当前内容,empty省略if判断-->
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}
