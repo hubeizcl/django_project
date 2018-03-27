@@ -58,19 +58,20 @@ def myself(request):
 
 @login_required(login_url='/account/login/')
 def myself_edit(request):
-    user = User.objects.get(username=request.user.username)
-    userprofile = UserProfile.objects.get(user=user)
-    userinfo = Userinfo.objects.get(user=user)
-    if request.method == "POST":
-        user_form = UserForm(request.POST)
-        userprofile_form = UserProfileForm(request.POST)
-        userinfo_form = UserInfoForm(request.POST)
-        if user_form.is_valid() and userprofile_form.is_valid() and userinfo_form.is_valid():
-            user_cd = user_form.cleaned_data
-            userprofile_cd = userprofile_form.cleaned_data
-            userinfo_cd = userinfo_form.cleaned_data
+    user = User.objects.get(username=request.user.username)  # 获取当前登录用户的user对象，因为外面有@login_required的注释，
+    # 因此进入这个方法中就必定是携带者已登录用户的信息，然后通过getusername查询获取当前用户对象
+    userprofile = UserProfile.objects.get(user=user)  # 根据上一步查出的用户获取userProfile对象
+    userinfo = Userinfo.objects.get(user=user)  # 同上
+    if request.method == "POST":  # 如果是提交数据
+        user_form = UserForm(request.POST)  # 获取表单对象
+        userprofile_form = UserProfileForm(request.POST)  # 同上
+        userinfo_form = UserInfoForm(request.POST)  # 同上
+        if user_form.is_valid() * userprofile_form.is_valid() * userinfo_form.is_valid():  # 判断获取的信息是否可以通过校验
+            user_cd = user_form.cleaned_data  # 将表单对象转换成字典对象
+            userprofile_cd = userprofile_form.cleaned_data  # 将表单对象转换成字典对象
+            userinfo_cd = userinfo_form.cleaned_data  # 将表单对象转换成字典对象
             print(user_cd['email'])
-            user.email = user_cd['email']
+            user.email = user_cd['email']  # 获取字典对象并赋值给对象的成员变量
             userprofile.brith = userprofile_cd['brith']
             userprofile.phone = userprofile_cd['phone']
             userinfo.company = userinfo_cd['company']
@@ -78,11 +79,11 @@ def myself_edit(request):
             userinfo.address = userinfo_cd['address']
             userinfo.profession = userinfo_cd['profession']
             userinfo.aboutme = userinfo_cd['aboutme']
-            user.save()
+            user.save()  # 保存对象
             userprofile.save()
             userinfo.save()
-            return HttpResponseRedirect('account/my_information')
-        else:
+            return HttpResponseRedirect('/account/my_information/')  # 重定向到my_information页面
+        else:  # 如果是想获取填充的表单
             user_form = UserForm(instance=request.user)
             userprofile_form = UserProfileForm(initial={"brith": userprofile.brith, "phone": userprofile.phone})
             userinfo_form = UserInfoForm(
@@ -92,5 +93,13 @@ def myself_edit(request):
                           {"user": user_form, "userprofile": userprofile_form, "userinfo": userinfo_form})
 
 
+@login_required(login_url='/account/login/')
 def my_image(request):
-    return render(request, 'account/imagecrop.html')
+    if request.method == "POST":
+        img = request.POST['img']
+        userinfo = Userinfo.objects.get(user=request.user.id)
+        userinfo.photo = img
+        userinfo.save()
+        return HttpResponse('1')
+    else:
+        return render(request, 'account/imagecrop.html')
