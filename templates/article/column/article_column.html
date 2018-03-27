@@ -4,7 +4,7 @@
 {% block content %}
     <div>
         <p class="text-right">
-            <button class=" btn btn-primary btn-lg">add column</button>
+            <button class=" btn btn-primary btn-lg" onclick="add_column()" id="add_column">add column</button>
         </p>
         <table class="table table-hover">
             <tr>
@@ -24,3 +24,24 @@
         </table>
     </div>
 {% endblock %}
+<script src="{% static 'js/jquery.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/layer.js' %}" type="text/javascript"></script>
+<script type="text/javascript">
+    function add_column() {
+        var index = layer.open({
+            type: 1,
+            skin: "layui-layer-rim",
+            area: ['400px', '200px'],
+            title: '新增栏目',
+            content: "<div class='text-center' style='margin-top:20px><p>请输入新的栏目名称</p><p><input type='text'></p></div>",
+            btn: ['确定', '取消'],
+            yes: function (index, layero) {
+                column_name = $('#id_column').val();
+                alert(column_name);
+            },
+            btn2: function (index, layero) {
+                layer.close(index);
+            }
+        });
+    }
+</script>
