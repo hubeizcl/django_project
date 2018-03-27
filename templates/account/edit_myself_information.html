@@ -1,3 +1,4 @@
+{% load staticfiles %}
 {% extends 'base.html' %}
 {% block title %}my information{% endblock %}
 {% block content %}
@@ -45,8 +46,12 @@
                 <input class="btn btn-primary btn-lg" value="submit" type="submit">
             </div>
         </form>
-        <div class="row">
-            <p>picture</p>
+        <div style="margin-right: 100px">
+            <img src="{% static 'images/长草颜.jpg' %}" class="img-circle" width="270px" id="my_photo">
+        </div>
+        <div style="margin-right: 100px">
+            <button class="btn btn-primary btn-lg" id="upload-image" onclick="upload_image_layer()">Upload my photo
+            </button>
         </div>
     </div>
 {% endblock %}

@@ -90,3 +90,7 @@ def myself_edit(request):
                          "profession": userinfo.profession, "aboutme": userinfo.aboutme})
             return render(request, 'account/edit_myself_information.html',
                           {"user": user_form, "userprofile": userprofile_form, "userinfo": userinfo_form})
+
+
+def my_image(request):
+    return render(request, 'account/imagecrop.html')

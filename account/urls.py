@@ -39,4 +39,6 @@ urlpatterns = [
     url(r'^my_information/$', views.myself, name="my_information"),
 
     url(r'^edit_myself_information/$', views.myself_edit, name="edit_myself_information"),
+
+    url(r'^my_image/$', views.my_image, name="my_image"),
 ]
