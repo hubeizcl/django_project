@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width ,initial-scale=1">
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/layer.css' %}">
 </head>
 <body>
 <div class="container">
@@ -21,4 +22,5 @@
     {% include 'footer.html' %}
 </div>
 </body>
+{% block js_block %}{% endblock %}
 </html>

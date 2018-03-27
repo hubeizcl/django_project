@@ -16,7 +16,14 @@
                 <tr>
                     <td>{{ forloop.counter }}</td><!--获取当前循环的序号-->
                     <td>{{ column.column }}</td>
-                    <td>--</td>
+                    <td>
+                        <a name="edit" href="javascript:" onclick="edit_column(this,{{ column.id }})">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
+                        <a name="delete" href="javascript:" onclick="del_column(this,{{ column.id }})">
+                            <span class="glyphicon glyphicon-trash" style="margin-left: 20px"></span>
+                        </a>
+                    </td>
                 </tr>
             {% empty %}
                 <p>还没设置栏目，太懒了</p><!--循环为空就显示当前内容,empty省略if判断-->
@@ -24,24 +31,49 @@
         </table>
     </div>
 {% endblock %}
-<script src="{% static 'js/jquery.js' %}" type="text/javascript"></script>
-<script src="{% static 'js/layer.js' %}" type="text/javascript"></script>
-<script type="text/javascript">
-    function add_column() {
-        var index = layer.open({
-            type: 1,
-            skin: "layui-layer-rim",
-            area: ['400px', '200px'],
-            title: '新增栏目',
-            content: "<div class='text-center' style='margin-top:20px><p>请输入新的栏目名称</p><p><input type='text'></p></div>",
-            btn: ['确定', '取消'],
-            yes: function (index, layero) {
-                column_name = $('#id_column').val();
-                alert(column_name);
-            },
-            btn2: function (index, layero) {
-                layer.close(index);
-            }
-        });
-    }
-</script>
+{% block js_block %}
+    <script src="{% static 'js/jquery.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/layer.js' %}" type="text/javascript"></script>
+    <script type="text/javascript">
+        function add_column() {
+            var index = layer.open({
+                type: 1,
+                skin: "layui-layer-rim",
+                area: ['400px', '200px'],
+                title: '新增栏目',
+                content: "<div class='text-center' style='margin-top:20px'><p>请输入新的栏目名称</p><p>{{ column_form.column }}</p></div>",
+                btn: ['确定', '取消'],
+                yes: function (index, layero) {//index即代表当前弹出框的对象，layero即对象本身
+                    column_name = $('#id_column').val();//获取弹出框中输入的值，也就是content中的input框中的值
+                    $.post('{% url "article:article_column" %}', {"column": column_name}, function (data) {
+                        if (data == '1') {//根据返回值判断是否输入的值已存在数据库中
+                            parent.location.reload();//不存在就重新加载当前页的上一页
+                            layer.msg('good');
+                        } else {
+                            layer.msg('此栏目已有，请更换名称');//存在就提示
+                        }
+                    });
+                },
+                btn2: function (index, layero) {
+                    layer.close(index);
+                }
+            });
+        }
+
+        function edit_column(the, id) {
+            var name = $(the).parent('tr').children('td').eq(1).text();
+            var index = layer.open({
+                type: 1,
+                skin: "layui-layer-rim",
+                area: ["400px,200px"],
+                title: '编辑栏目',
+                content: "<div class='text-center' style='margin-top:20px'><p>请输入新的栏目名称</p><p><input type='text' id='new_name' value='+name+'></p></div>",
+            })
+
+        }
+
+        function del_column(the, id) {
+
+        }
+    </script>
+{% endblock %}
