@@ -30,10 +30,6 @@
             {% endfor %}
         </table>
     </div>
-{% endblock %}
-{% block js_block %}
-    <script src="{% static 'js/jquery.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/layer.js' %}" type="text/javascript"></script>
     <script type="text/javascript">
         function add_column() {
             var index = layer.open({
@@ -59,7 +55,8 @@
                 }
             });
         }
-
+    </script>
+    <script type="text/javascript">
         function edit_column(the, id) {
             var name = $(the).parent('tr').children('td').eq(1).text();
             var index = layer.open({
@@ -67,13 +64,49 @@
                 skin: "layui-layer-rim",
                 area: ["400px,200px"],
                 title: '编辑栏目',
-                content: "<div class='text-center' style='margin-top:20px'><p>请输入新的栏目名称</p><p><input type='text' id='new_name' value='+name+'></p></div>",
+                content: "<div class='text-center' style='margin-top:20px'><p>请输入新的栏目名称</p><p><input type='text' id='new_name' value=''+name+''></p></div>",
+                btn: ['确定', '取消'],
+                yes: function (index, layero) {
+                    new_name = $('#new_name').val();
+                    $.post('{% url "article:rename_article_column" %}', {
+                        "column_id": id,
+                        'column_name': column_name
+                    }, function (data) {
+                        if (data == "1") {
+                            parent.location.reload();
+                            layer.msg("good");
+                        } else {
+                            layer.msg("新的名称不可用");
+                        }
+                    });
+                }
             })
-
         }
-
+    </script>
+    <script type="text/javascript">
         function del_column(the, id) {
-
+            var name = $(the).parent('tr').children('td').eq(1).text();
+            var index = layer.open({
+                type: 1,
+                skin: "layui-layer-rim",
+                area: ["400px,200px"],
+                title: '删除栏目',
+                content: "<div class='text-center' style='margin-top:20px'><p>确定删除</p></div>",
+                btn: ['确定', '取消'],
+                yes: function (index, layero) {
+                    $.post('{% url "article:delete_article_column" %}', {
+                        "column_id": id
+                    }, function (data) {
+                        if (data == "1") {
+                            parent.location.reload()
+                            layer.msg("good")
+                        } else {
+                            layer.msg("删除失败")
+                        }
+                    });
+                }
+            })
         }
     </script>
 {% endblock %}
+

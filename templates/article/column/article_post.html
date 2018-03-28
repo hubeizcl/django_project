@@ -1,0 +1,64 @@
+{% extends 'article/base.html' %}
+{% load staticfiles %}
+{% block title %}article column{% endblock %}
+{% block content %}
+    <form class="form-horizontal" action="." method="post">{% csrf_token %}
+        <div class="row" style="margin-top: 10px">
+            <div class="col-md-2 text-right"><span>标题</span></div>
+            <div class="col-md-10 text-left">{{ article_post_form.title }}</div>
+        </div>
+        <div class="row" style="margin-top: 10px">
+            <div class="col-md-2 text-right"><span>栏目</span></div>
+            <div class="col-md-10 text-left">
+                <select id="which_column">
+                    {% for column in article_columns %}
+                        <option value="{{ column.id }}">{{ column.column }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 10px">
+            <div class="col-md-2 text-right"><span>内容</span></div>
+
+            <div id="editormd" class="col-md-10 text-left">
+                <textarea style="display: none" id="id_body"></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <input type="button" class="btn btn-primary btn-lg" value="发布" onclick="publish_article()">
+        </div>
+    </form>
+    <link rel="stylesheet" href="{% static 'editor/css/editormd.css' %}"/>
+    <link rel="stylesheet" href="{% static 'editor/css/style.css' %}"/>
+    <script type="text/javascript" src="{% static 'editor/editormd.amd.min.js' %}"></script>
+    <script type="text/javascript">
+        $(function () {
+            var editor = editormd("editormd", {
+                width: "100%",
+                height: 640,
+                syncScrolling: "single",
+                path: "{% static 'editor/lib/' %}"
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        function publish_article() {
+            var title = $('#id_title').val();
+            var column_id = $('#which_column').val();
+            var body = $('#id_body').val();
+            $.post("{% url 'article:article_post' %}", {
+                "title": title,
+                "column_id": column_id,
+                "body": body
+            }, function (data) {
+                if (data == "1") {
+                    layer.msg("successful");
+                } else if (data == "2") {
+                    layer.msg("sorry");
+                } else {
+                    layer.msg("项目名称不能为空")
+                }
+            })
+        }
+    </script>
+{% endblock %}

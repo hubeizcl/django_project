@@ -1,7 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import ArticleColumn
-from .form import ArticleColumnForm
+from .models import ArticleColumn, ArticlePost
+from .form import ArticleColumnForm, ArticlePostForm
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -49,3 +49,42 @@ def delete_article_column(request):
         return HttpResponse('1')
     except:
         return HttpResponse('0')
+
+
+@login_required(login_url='/account/login/')
+@csrf_exempt
+def article_post(request):
+    if request.method == "POST":
+        article_post_form = ArticlePostForm(data=request.POST)  # 获取表单数据
+        if article_post_form.is_valid():
+            cd = article_post_form.cleaned_data
+            try:
+                new_article = article_post_form.save(commit=False)  # 将表单对象转换成实体对象，暂时不提交数据库
+                new_article.author = request.user  # 将当前用户对象赋值给实体对象
+                new_article.column = request.user.article_column.get(
+                    id=request.POST['column_id'])  # 通过外键将column对象赋值给实体对象
+                new_article.save()
+                return HttpResponse('1')
+            except:
+                return HttpResponse('2')
+        else:
+            return HttpResponse('3')
+    else:
+        article_post_form = ArticlePostForm()
+        article_columns = request.user.article_column.all()
+        return render(request, "article/column/article_post.html",
+                      {"article_post_form": article_post_form, "article_columns": article_columns})
+
+
+@login_required(login_url='/account/login/')
+@csrf_exempt
+def article_list(request):
+    articles = ArticlePost.objects.filter(author=request.user)
+    return render(request, "article/column/article_list.html", {"articles": articles})
+
+
+@login_required(login_url='/account/login/')
+@csrf_exempt
+def article_detail(request, id, slug):
+    article = get_object_or_404(ArticlePost, id=id, slug=slug)
+    return render(request, "article/column/article_detail.html", {"article": article})
