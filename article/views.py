@@ -87,7 +87,7 @@ def article_list(request):
         current_page = paginator.page(page)
         articles = current_page.object_list
     except PageNotAnInteger:
-        current_page = Paginator.page(self=paginator,number=1)
+        current_page = Paginator.page(self=paginator, number=1)
         articles = current_page.object_list
     except EmptyPage:
         current_page = paginator.page(paginator.num_pages)
@@ -100,6 +100,8 @@ def article_list(request):
 def article_detail(request, id, slug):
     article = get_object_or_404(ArticlePost, id=id, slug=slug)
     return render(request, "article/column/article_detail.html", {"article": article})
+
+
 
 
 @login_required(login_url='/account/login/')
