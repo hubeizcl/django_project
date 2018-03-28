@@ -88,3 +88,29 @@ def article_list(request):
 def article_detail(request, id, slug):
     article = get_object_or_404(ArticlePost, id=id, slug=slug)
     return render(request, "article/column/article_detail.html", {"article": article})
+
+
+@login_required(login_url='/account/login/')
+@csrf_exempt
+def rename_article(request):
+    article_name = request.POST['article_name']
+    article_id = request.POST['article_id']
+    try:
+        line = ArticlePost.objects.get(id=article_id)
+        line.column = article_name
+        line.save()
+        return HttpResponse('1')
+    except:
+        return HttpResponse('0')
+
+
+@login_required(login_url='/account/login/')
+@csrf_exempt
+def delete_article(request):
+    article_id = request.POST['article_id']
+    try:
+        line = ArticlePost.objects.get(id=article_id)
+        line.delete()
+        return HttpResponse('1')
+    except:
+        return HttpResponse('0')

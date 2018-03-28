@@ -1,6 +1,23 @@
 {% extends 'article/base.html' %}
 {% load staticfiles %}
 {% block title %}article column{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'editor/css/editormd.css' %}"/>
+    <link rel="stylesheet" href="{% static 'editor/css/style.css' %}"/>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript" src="{% static 'editor/editormd.amd.min.js' %}"></script>
+    <script type="text/javascript">
+        $(function () {
+            var editor = editormd("editormd", {
+                width: "100%",
+                height: 640,
+                syncScrolling: "single",
+                path: "{% static 'editor/lib/' %}"
+            });
+        });
+    </script>
+{% endblock %}
 {% block content %}
     <form class="form-horizontal" action="." method="post">{% csrf_token %}
         <div class="row" style="margin-top: 10px">
@@ -28,19 +45,6 @@
             <input type="button" class="btn btn-primary btn-lg" value="发布" onclick="publish_article()">
         </div>
     </form>
-    <link rel="stylesheet" href="{% static 'editor/css/editormd.css' %}"/>
-    <link rel="stylesheet" href="{% static 'editor/css/style.css' %}"/>
-    <script type="text/javascript" src="{% static 'editor/editormd.amd.min.js' %}"></script>
-    <script type="text/javascript">
-        $(function () {
-            var editor = editormd("editormd", {
-                width: "100%",
-                height: 640,
-                syncScrolling: "single",
-                path: "{% static 'editor/lib/' %}"
-            });
-        });
-    </script>
     <script type="text/javascript">
         function publish_article() {
             var title = $('#id_title').val();
@@ -53,6 +57,7 @@
             }, function (data) {
                 if (data == "1") {
                     layer.msg("successful");
+                    location.href = "{% url 'article:article_list' %}";
                 } else if (data == "2") {
                     layer.msg("sorry");
                 } else {

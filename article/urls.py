@@ -8,5 +8,7 @@ urlpatterns = [
     url(r'^article_post/$', views.article_post, name="article_post"),
     url(r'^article_list/$', views.article_list, name="article_list"),
     url(r'^article_detail/(?P<id>\d+)/(?P<slug>[-\w]+)/$', views.article_detail, name="article_detail"),
+    url(r'^rename_article/$', views.rename_article, name="rename_article"),
+    url(r'^delete_article/$', views.delete_article, name="delete_article"),
 ]
 app_name = 'article'
