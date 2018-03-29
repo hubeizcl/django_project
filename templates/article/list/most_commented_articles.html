@@ -1,0 +1,9 @@
+{% load article_tags %}
+<ul>
+    {% for article in most_commented_articles %}
+        <li>
+            <a href="{{ article.get_url_path }}">{{ article.title }}</a>
+        </li>
+    {% empty %}
+    {% endfor %}
+</ul>

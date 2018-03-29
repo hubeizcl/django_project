@@ -1,9 +1,11 @@
 {% extends 'article/base.html' %}
 {% load staticfiles %}
+{% load article_tags %}
 {% block title %}articles{% endblock %}
 {% block content %}
     <div class="row text-center vertical-middle-sm">
         <h1>阅读，丰富头脑，善化行为</h1>
+
     </div>
     <div class="container">
         <div class="col-md-8">
@@ -35,6 +37,9 @@
                 {% if userinfo %}
                     <p>{{ userinfo.company }}</p>
                     <p>{{ userinfo.school }}</p>
+                    <div>
+                        <p>共发表文章{% author_total_article user %}篇</p>
+                    </div>
                 {% else %}
                     <p>这个作者太懒，什么也没填写</p>
                 {% endif %}

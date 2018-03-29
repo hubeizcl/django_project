@@ -1,5 +1,6 @@
 {% extends 'article/base.html' %}
 {% load staticfiles %}
+{% load article_tags %}
 {% block title %}article detail{% endblock %}
 {% block css %}
     <link rel="stylesheet" href="{% static 'editor/css/editormd.preview.css' %}"/>
@@ -116,6 +117,14 @@
                         </li>
                     {% endfor %}
                 </ol>
+                <hr>
+                <p class="text-center">
+                <h3>最新文章</h3></p>
+                {% latest_articles 4 %}
+                <hr>
+                <p class="text-center">
+                <h3>最多评论文章</h3></p>
+                {% most_commented_articles 4 %}
             </div>
         </div>
         </div>
