@@ -25,18 +25,55 @@
             });
         });
     </script>
+    <script type="text/javascript">
+        function like_article(id, action) {
+            $.post('{% url "article:like_article" %}', {"id": id, "action": action}, function (data) {
+                if (data == 1) {
+                    layer.msg('感谢点赞');
+                    window.location.reload();
+                } else {
+                    layer.msg('我会继续努力');
+                    window.location.reload();
+                }
+            })
+        }
+    </script>
 {% endblock %}
-{% block content %}
-    <div>
-        <header>
-            <h1>{{ article.title }}</h1>
-            <p>{{ user.username }}</p>
-        </header>
-        <div id="editor_view">
+{% with total_like=article.user_like.count  user_like=article.user_like.all %}
+    {% block content %}
+        <div class="container">
+            <header>
+                <h1>标题:{{ article.title }}</h1>
+                <p>作者:<a
+                        href="{% url 'article:author_articles' article.author.username %}">{{ article.author.username }}</a>
+                </p>
+                <span style="margin-left: 20px"
+                      class="glyphicon glyphicon-thumbs-up">{{ total_like }} like {{ total_like|pluralize }}</span>
+            </header>
+            <div id="editor_view">
             <textarea id="append_test" style="display: none">
                 {{ article.body }}
             </textarea>
+            </div>
+            <div>
+                <p class="text-center">
+                    <a onclick="like_article({{ article.id }},'like' )" href="#"><span
+                            class="glyphicon glyphicon-thumbs-up">like</span></a>
+                    <a onclick="like_article({{ article.id }},'unlike' )" href="#"><span
+                            class="glyphicon glyphicon-thumbs-down">unlike</span></a>
+                </p>
+            </div>
+            <div>
+                <p class="text-center"><strong>点赞本文的读者</strong></p>
+                {% for user in article.user.user_like.all %}\
+                    <p class="text-center">{{ user.username }}</p>
+                {% empty %}
+                    <p class="text-center">还没有人对此文章表态</p>
+                {% endfor %}
+            </div>
         </div>
-    </div>
+        </div>
+        </div>
 
-{% endblock %}
+    {% endblock %}
+{% endwith %}
