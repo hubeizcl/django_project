@@ -72,9 +72,11 @@ def article_post(request):
             return HttpResponse('3')
     else:
         article_post_form = ArticlePostForm()
+        article_tags = request.user.tag.all()
         article_columns = request.user.article_column.all()
         return render(request, "article/column/article_post.html",
-                      {"article_post_form": article_post_form, "article_columns": article_columns})
+                      {"article_post_form": article_post_form, "article_columns": article_columns,
+                       "article_tags": article_tags})
 
 
 @login_required(login_url='/account/login/')
