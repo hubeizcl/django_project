@@ -1,11 +1,16 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import ArticleColumn, ArticlePost
+from .models import ArticleColumn, ArticlePost, Comment
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.http import HttpResponse
+import redis
+from django.conf import settings
+from .form import CommentForm
+
+r = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
 
 
 def article_titles(request, username=None):
@@ -37,7 +42,30 @@ def article_titles(request, username=None):
 
 def article_detail(request, id, slug):
     article = get_object_or_404(ArticlePost, id=id, slug=slug)
-    return render(request, "article/list/article_detail.html", {"article": article})
+    total_views = r.incr("article:{}:views".format(article.id))  # 在Redis中存入键为article:1:views值为自增数值的键值对
+    r.zincrby('article_ranking', article.id, 1)  # 隐藏含义就是，没有就创建一个有序的zset集合，然后在其中存入以article.id为主键，初始值为零，步增为1的一个集合
+
+    article_ranking = r.zrange('article_ranking', 0, -1, desc=True, withscores=False)[
+                      :10]  # 拿到article_ranking这个zset所有根据倒序排列的一个列表，然后取前十位
+    article_ranking_ids = []  # 获取上述列表的所有的id值，将其转换成数值列表
+    for id in article_ranking:
+        try:
+            article_ranking_ids.append(int(id))
+        except ValueError:
+            continue
+    most_viewed = list(ArticlePost.objects.filter(id__in=article_ranking_ids))  # 根据这些ID值拿到对应的article，并将其塞入列表中
+    most_viewed.sort(key=lambda x: article_ranking_ids.index(x.id))
+    if request.method == "POST":
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+            new_comment = comment_form.save(commit=False)
+            new_comment.article = article
+            new_comment.save()
+    else:
+        comment_form = CommentForm()
+    return render(request, "article/list/article_detail.html",
+                  {"article": article, "total_views": total_views, "most_viewed": most_viewed,
+                   "comment_form": comment_form})
 
 
 @csrf_exempt
