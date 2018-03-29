@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import ArticleColumn, ArticlePost
-from .form import ArticleColumnForm, ArticlePostForm
+from .models import ArticleColumn, ArticlePost, ArticleTag
+from .form import ArticleColumnForm, ArticlePostForm, ArticleTagForm
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -102,8 +102,6 @@ def article_detail(request, id, slug):
     return render(request, "article/column/article_detail.html", {"article": article})
 
 
-
-
 @login_required(login_url='/account/login/')
 @csrf_exempt
 def delete_article(request):
@@ -137,3 +135,37 @@ def redit_article(request, article_id):
             return HttpResponse('1')
         except:
             return HttpResponse('2')
+
+
+@login_required(login_url='/account/login/')
+@csrf_exempt
+def article_tag(request):
+    if request.method == "GET":
+        article_tag = ArticleTag.objects.filter(author=request.user)
+        article_tag_form = ArticleTagForm()
+        return render(request, 'article/tag/tag_list.html',
+                      {"article_tag_form": article_tag_form, "article_tag": article_tag})
+    if request.method == "POST":
+        article_tag_form = ArticleTagForm(data=request.POST)
+        if article_tag_form.is_valid():
+            try:
+                new_tag = article_tag_form.save(commit=False)
+                new_tag.author = request.user
+                new_tag.save()
+                return HttpResponse('1')
+            except:
+                return HttpResponse('the data cannot be save')
+        else:
+            return HttpResponse('sorry,the form is not valid')
+
+
+@login_required(login_url='/account/login/')
+@csrf_exempt
+def del_article_tag(request):
+    tag_id = request.POST['id']
+    try:
+        article_tag = ArticleTag.objects.filter(id=tag_id)
+        article_tag.delete()
+        return HttpResponse('1')
+    except:
+        return HttpResponse('2')

@@ -15,5 +15,7 @@ urlpatterns = [
     url(r'^list_article_titles/(?P<username>[-\w]+)/$', list_views.article_titles, name="author_articles"),
     url(r'^list_article_detail/(?P<id>\d+)/(?P<slug>[-\w]+)/$', list_views.article_detail, name="list_article_detail"),
     url(r'^like_article/$', list_views.like_article, name="like_article"),
+    url(r'^article_tag/$', views.article_tag, name="article_tag"),
+    url(r'^del_article_tag/$', views.del_article_tag, name="del_article_tag"),
 ]
 app_name = 'article'

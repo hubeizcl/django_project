@@ -1,0 +1,78 @@
+{% extends 'article/base.html' %}
+{% load staticfiles %}
+{% block title %}articles tag{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        function add_tag() {
+            $.post('{% url "article:article_tag" %}', {"tag": $('#id_tag').val()}, function (data) {
+                if (data == "1") {
+                    layer.msg('you have added a tag');
+                    window.location.reload();
+                } else {
+                    layers.msg(data);
+                }
+            })
+        }
+
+    </script>
+    <script type="text/javascript">
+        function del_tag(the, id) {
+            var article_tag = $(the).parent('tr').children('td').eq(1).text();
+            layer.open({
+                type: 1,
+                skin: ["600px", '200px'],
+                btn: ['确定', '取消'],
+                title: "删除文章标签",
+                content: "<div class='text-center' style='margin-top:20px'><p>确定删除</p></div>",
+                yes: function () {
+                    $.post('{% url "article:del_article_tag" %}', {"id": id}, function (data) {
+                        if (data == "1") {
+                            layer.msg('the tag has been deleted');
+                            window.location.reload();
+                        } else {
+                            layers.msg("删除失败");
+                        }
+                    })
+
+                }
+            });
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <div>
+        <p>添加文章标签</p>
+        <form class="form-horizontal" action="." method="post">{% csrf_token %}
+            <div class="row" style="margin-top: 10px">
+                <div class="col-md-2 text-right"><span>文章标签</span></div>
+                <div class="col-sm-10 text-left">{{ article_tag_form.tag }}</div>
+            </div>
+            <div class="row">
+                <input class="btn btn-primary btn-lg" style="margin-left: 200px;margin-top: 10px" value="添加"
+                       onclick="add_tag()">
+            </div>
+        </form>
+    </div>
+    <div>
+        <p>已有标签</p>
+        <table class="table table-hover">
+            <tr>
+                <td>序号</td>
+                <td>文章标签</td>
+                <td>操作</td>
+            </tr>
+            {% for tag in article_tag %}
+                <tr id="{{ forloop.counter }}">
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ tag.tag }}</td>
+                    <td>
+                        <a name="delete" href="javascript:void(0)" onclick="del_tag(this,{{ tag.id }})">
+                            <span class="glyphicon glyphicon-trash" style="margin-left: 20px"></span>
+                        </a></td>
+                </tr>
+            {% empty %}
+                <p>You have article tags Please add them</p>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}
