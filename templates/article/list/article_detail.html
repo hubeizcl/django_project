@@ -52,6 +52,9 @@
                               class="glyphicon glyphicon-thumbs-up">{{ total_like }} like {{ total_like|pluralize }}</span>
                         <span style="margin-left: 20px">{{ total_views }} view {{ total_views|pluralize }}</span>
                     </p>
+                    <p>
+                        <span style="margin-right: 10px"><strong>tags:</strong></span>{{ article.article_tag.all |join:',' }}
+                    </p>
                 </header>
                 <div id="editor_view">
                                         <textarea id="append_test" style="display: none">
@@ -126,6 +129,16 @@
                 <p class="text-center">
                 <h3>最多评论文章</h3></p>
                 {% most_commented_articles 4 %}
+                <hr>
+                <p class="text-center">
+                <h3>推荐相似的文章</h3></p>
+                <ul>
+                    {% for similar in similar_articles %}
+                        <p><a href="{{ similar.get_url_path }}">{{ similar.title }}</a></p>
+                    {% empty %}
+                        <p>sorry,没有相似的文章</p>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
         </div>

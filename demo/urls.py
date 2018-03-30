@@ -23,5 +23,7 @@ urlpatterns = [
     url(r'^account/', include('account.urls', namespace='account')),
     url(r'^pwd_reset/', include('password_reset.urls'), name='pwd_reset'),
     url(r'^article/', include('article.urls'), name='article'),
+    url(r'^image/', include('image.urls'), name='image'),
     url(r'^home/', TemplateView.as_view(template_name="home.html")),
+
 ]

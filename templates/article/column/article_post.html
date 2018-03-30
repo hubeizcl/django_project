@@ -64,10 +64,15 @@
             var title = $('#id_title').val();
             var column_id = $('#which_column').val();
             var body = $('#id_body').val();
+            var article_tags = [];
+            $.each($("input[name='article_tag']:checked"), function () {
+                article_tags.push($(this).val());
+            });
             $.post("{% url 'article:article_post' %}", {
                 "title": title,
                 "column_id": column_id,
-                "body": body
+                "body": body,
+                'tags': JSON.stringify(article_tags)
             }, function (data) {
                 if (data == "1") {
                     layer.msg("successful");

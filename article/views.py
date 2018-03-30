@@ -5,6 +5,7 @@ from .form import ArticleColumnForm, ArticlePostForm, ArticleTagForm
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+import json
 
 
 # Create your views here.
@@ -65,6 +66,12 @@ def article_post(request):
                 new_article.column = request.user.article_column.get(
                     id=request.POST['column_id'])  # 通过外键将column对象赋值给实体对象
                 new_article.save()
+                tags = request.POST['tags']
+                print(tags)
+                if tags:
+                    for tag in json.loads(tags):
+                        tag = request.user.tag.get(tag=tag)
+                        new_article.article_tag.add(tag)
                 return HttpResponse('1')
             except:
                 return HttpResponse('2')

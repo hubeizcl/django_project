@@ -9,6 +9,7 @@ from django.http import HttpResponse
 import redis
 from django.conf import settings
 from .form import CommentForm
+from django.db.models import Count
 
 r = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
 
@@ -55,6 +56,7 @@ def article_detail(request, id, slug):
             continue
     most_viewed = list(ArticlePost.objects.filter(id__in=article_ranking_ids))  # 根据这些ID值拿到对应的article，并将其塞入列表中
     most_viewed.sort(key=lambda x: article_ranking_ids.index(x.id))
+    global similar_articles
     if request.method == "POST":
         comment_form = CommentForm(data=request.POST)
         if comment_form.is_valid():
@@ -63,9 +65,13 @@ def article_detail(request, id, slug):
             new_comment.save()
     else:
         comment_form = CommentForm()
+        article_tags_ids = article.article_tag.values_list('id', flat=True)
+        similar_articles = ArticlePost.objects.filter(article_tag__in=article_tags_ids).exclude(id=article.id)
+        similar_articles = similar_articles.annotate(same_tags=Count('article_tag')).order_by('-same_tags', '-created')[
+                           :4]
     return render(request, "article/list/article_detail.html",
                   {"article": article, "total_views": total_views, "most_viewed": most_viewed,
-                   "comment_form": comment_form})
+                   "comment_form": comment_form, "similar_articles": similar_articles})
 
 
 @csrf_exempt

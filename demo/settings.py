@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'account.apps.AccountConfig',
     'password_reset',
     'article.apps.ArticleConfig',
+    'image.apps.ImageConfig',
 ]
 
 MIDDLEWARE = [
