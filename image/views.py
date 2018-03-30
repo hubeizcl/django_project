@@ -9,7 +9,7 @@ from .form import ImageForm
 
 # Create your views here.
 
-@login_required('/account/login/')
+@login_required(login_url='/account/login/')
 @csrf_exempt
 @require_POST
 def upload_image(request):
@@ -24,7 +24,24 @@ def upload_image(request):
             return JsonResponse({'status': "0"})
 
 
-@login_required("/account/login/")
+@login_required(login_url="/account/login/")
 def list_image(request):
     images = Image.objects.filter(user=request.user)
     return render(request, 'image/list_images.html', {"images": images})
+
+
+@login_required(login_url="/account/login/")
+@csrf_exempt
+@require_POST
+def del_image(request):
+    try:
+        image = Image.objects.get(id=request.POST["id"])
+        image.delete()
+        return JsonResponse({"status": 1})
+    except:
+        return JsonResponse({"status": 2})
+
+
+def falls_images(request):
+    images = Image.objects.all()
+    return render(request, 'image/falls_images.html', {"images": images})

@@ -16,6 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls import url, include
 from django.views.generic import TemplateView
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -24,6 +26,9 @@ urlpatterns = [
     url(r'^pwd_reset/', include('password_reset.urls'), name='pwd_reset'),
     url(r'^article/', include('article.urls'), name='article'),
     url(r'^image/', include('image.urls'), name='image'),
+    url(r'^course/', include('course.urls'), name='course'),
     url(r'^home/', TemplateView.as_view(template_name="home.html")),
 
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

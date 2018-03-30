@@ -1,0 +1,57 @@
+{% extends 'article/base.html' %}
+{% load staticfiles %}
+{% block title %}images{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/mansory-style.css' %}" type="text/css"/>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript" src="{% static 'js/mp.mansory.js' %}"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+            $("#my-gallery-container").mpmansory({
+                childrenClass: 'falls_item',
+                columnClasses: 'falls_padding',
+                breakpoints: {
+                    lg: 3,
+                    md: 4,
+                    sm: 6,
+                    xs: 12
+                },
+                distributeBy: {
+                    attr: 'data-order',
+                    attrOrder: 'desc',
+                    order: false,
+                    height: false
+                },
+            })
+        });
+
+        function displayImage(user, title, url, description, host) {
+            layer.open({
+                type: 1,
+                title: title,
+                skin: 'layui-layer-rim',
+                area: ['800px', '800px'],
+                content: '<div class="text-center"><img src="http://' + host + url + '"> <p>发布者:' + user + '</p></div><div style="margin-left: 10px">' + description + '</div>',
+            })
+            ;
+        }
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div id="my-gallery-container">
+            {% for image in images %}
+                <div class="falls_item h200" data-order="{{ image.id }}">
+                    {#                    <img src="{{ image.image.url }}">#}
+                    <a href="javascript:void(0)"
+                       onclick="displayImage('{{ image.user }}','{{ image.title }}','{{ image.image.url }}','{{ image.description }}','{{ request.get_host }}')"><img
+                            src="{{ image.image.url }}"></a>
+                    <p>{{ image.title }}</p>
+                </div>
+            {% empty %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

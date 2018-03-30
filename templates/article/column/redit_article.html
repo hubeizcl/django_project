@@ -53,7 +53,7 @@
                             <select id="which_column">
                                 {% for column in article_columns %}
                                     {% if column == this_article_column.column %}
-                                        <option value="{{ column.id }}" selected="selected">{{ column.column }}</option>
+                                          <option value="{{ column.id }}" selected="selected">{{ column.column }}</option>
                                     {% else %}
                                         <option value="{{ column.id }}">{{ column.column }}</option>
                                     {% endif %}
