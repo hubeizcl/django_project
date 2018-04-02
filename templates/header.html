@@ -10,9 +10,12 @@
             </div>
             <div>
                 <ul class="nav navbar-nav" role="navigation">
+                    <li><a href="{% url 'course:about' %}">ABOUT</a></li>
                     <li><a href="{% url 'blog:blog_title' %}">BLOG</a></li>
                     <li><a href="{% url 'article:list_article_titles' %}">文章</a></li>
                     <li><a href="{% url 'image:falls_images' %}">美图</a></li>
+                    <li><a href="{% url 'course:course_list' %}">课程</a></li>
+                    <li><a href="{% url 'course:course_manage' %}">课程管理</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right" style="margin-right: 10px">
                     {% if user.is_authenticated %}
